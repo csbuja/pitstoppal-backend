@@ -89,17 +89,19 @@ app.all('/api/rerate/:userid', function(req, res){
 });
 
 app.all('/api/rate/:userid/', function(req,res){
+
 	var term = {
 		userid: req.params.userid,
 		restaurant_id: req.body.id,
 		name: req.body.name,
 		rate: req.body.rating,
-		foodtype: (req.body.categories).toString()
+		foodtype: (req.body.categories).toString(),
+		from_survey: req.body.from_survey
 	};
 	var dup = {
 		rate: req.body.rate
 	};
-	db.query('INSERT INTO rate SET ? ON DUPLICATE KEY UPDATE rate=VALUES(rate)', term, function(err, result) {
+	db.query('INSERT INTO rate SET ? ON DUPLICATE KEY UPDATE rate=VALUES(rate)', term, function(err, result) { 
 		if (err) throw err;
 		else res.send('Data sent');
 	});
