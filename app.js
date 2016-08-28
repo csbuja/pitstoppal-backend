@@ -40,7 +40,7 @@ function toMiles(km){
 
 
 app.all('/api/check/survey/:userid', function(req, res){
-	db.query('SELECT * from survey where userid = ?', req.params.userid, function(err, result) {
+	db.query('SELECT userid from user where userid = ?', req.params.userid, function(err, result) {
 		if (err){
 			throw err
 		}else{
