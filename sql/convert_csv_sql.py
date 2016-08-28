@@ -48,7 +48,7 @@ with open('data.csv', 'rb') as csvfile:
 			for i in range(1,6):
 				if row[i] != "":
 					if(row[0] in data2):
-						print "insert into rate values('" + str(i) +"','" + row[0] + "','','" + data2[row[0]] +"',"  + row[i] + ');';
+						print "insert into rate values('" + str(i) +"','" + row[0] + "','','" + data2[row[0]] +"',"  + row[i] + ',1);';
 					else:
-						print "insert into rate values('" + str(i) +"','" + row[0] + "',''," + "''" +","  + row[i] + ');';
+						print "insert into rate values('" + str(i) +"','" + row[0] + "',''," + "''" +","  + row[i] + ',1);';
 
