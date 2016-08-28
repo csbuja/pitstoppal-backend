@@ -54,7 +54,12 @@ app.all('/api/check/survey/:userid', function(req, res){
 });
 
 
-app.all('/api/survey', function(req,res){
+//Assumption: This is only called after completing a survey.
+app.all('/api/survey', function(req,res){ 
+
+	//by above assumption, 
+	DATA_IS_FROM_SURVEY = true;
+
 	console.log('Start Initializing');
 	var post = {userid: req.body.userID};
 	db.query('INSERT INTO user SET ?', post, function(err, result) {
@@ -70,9 +75,10 @@ app.all('/api/survey', function(req,res){
 			restaurant_id: data.id,
 			name: data.name,
 			rate: data.rating,
-			foodtype: (data.categories).toString()
+			foodtype: (data.categories).toString(),
+			from_survey: DATA_IS_FROM_SURVEY
 		};
-		driverNeeds.check_add(term);
+		driverNeeds.insert_rate(term);
 	}
 	console.log('Initialization Complete');
 });
@@ -195,7 +201,7 @@ app.get('/api/search/:lat/:lon/:name/:location?', (req, res) => {
 app.get('/api/yelp/:currentPosition/:lastPosition/:userid',function (req, res) {
 	var currentPosition = JSON.parse(req.params.currentPosition);
 	var radius = 40000; //max 40000 meters
-
+	console.log("queried yelp")
 	var makeQueries = function (restaurants,userid,rates){
 		var deferred = Q.defer();
 		var results = {};

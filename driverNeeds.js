@@ -215,11 +215,7 @@ module.exports = {
 		}
 	},
 
-	check_add: function (term) {
-		//console.log('check and add');
-		db.query('INSERT INTO survey SET ?', term,function(err, result) {
-			if (err) throw err;
-		});
+	insert_rate: function (term) {
 		db.query('INSERT INTO rate SET ?', term,function(err, result) {
 			if (err) throw err;
 		});
