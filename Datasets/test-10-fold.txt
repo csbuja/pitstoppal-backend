@@ -1,0 +1,12 @@
+Res,User,Rate,FoodType
+0,5,3,"korean"
+2,2,4,"korean,cafes"
+3,1,3,"sandwiches,hotdogs"
+4,5,3,"coffee,vegetarian,sandwiches"
+9,4,4,"newamerican,pubs"
+11,4,1,"asianfusion,comfortfood,italian"
+13,2,1.5,"newamerican"
+22,3,4,"salad,pizza,sandwiches"
+24,4,5,"hotdogs,mexican"
+24,5,2.5,"hotdogs,mexican"
+36,2,3.5,"sandwiches,salad,soup"

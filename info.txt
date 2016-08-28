@@ -1,0 +1,10 @@
+Fo' yelp:
+
+Consumer Key	T0VjCY0WkEUOuyC5U46qMw
+Consumer Secret	LwzcaQMBcdE2cz-iv5M3KDxHwCk
+Token	QF86lSA004Z3R5mbKmXLGVFaUGfLSTET
+Token Secret	HedWTyztvJe_cuVgPL0IwqsHYjs
+
+
+
+

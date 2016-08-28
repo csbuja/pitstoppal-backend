@@ -1,0 +1,33 @@
+{
+  "name": "driveBuddy",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "driveBuddy",
+  "license": "none",
+  "dependencies": {
+    "body-parser": "^1.15.0",
+    "events": "^1.0.2",
+    "express": "^4.8.8",
+    "moment": "^2.12.0",
+    "mysql": "^2.10.2",
+    "pg": "^4.4.6",
+    "polyline": "0.0.3",
+    "q": "^1.4.1",
+    "request": "^2.42.0",
+    "require": "^0.5.0",
+    "underscore": "^1.7.0",
+    "yelp": "^1.0.1"
+  },
+  "devDependencies": {
+    "assert": "^1.1.2",
+    "mocha": "^1.21.4",
+    "sinon": "^1.10.3"
+  },
+  "engines": {
+      "node": "^5.6.0"
+        }
+}
