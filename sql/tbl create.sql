@@ -1,3 +1,4 @@
+CREATE DATABASE IF NOT EXISTS eecs498;
 use eecs498
 drop table if exists sensordata;
 drop table if exists user_res;

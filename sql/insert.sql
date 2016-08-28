@@ -3,16 +3,18 @@
 #chris
 #austin
 #jing
+delete from user;
+delete from rate;
 insert into user values('5');
 insert into user values('1');
 insert into user values('2');
 insert into user values('3');
-#insert into user values('1290115437671776');
+insert into user values('1290115437671776');
 insert into rate values('2','rich-j-c-korean-restaurant-ann-arbor-2','','korean',5);
 insert into rate values('1290115437671776','rich-j-c-korean-restaurant-ann-arbor-2','','korean',3);
 insert into rate values('5','rich-j-c-korean-restaurant-ann-arbor-2','','korean',3);
-insert into rate values('2','angs-korean-restaurant-ann-arbor-2','','',3.5);
-insert into rate values('5','angs-korean-restaurant-ann-arbor-2','','',3.5);
+insert into rate values('2','kangs-korean-restaurant-ann-arbor-2','','',3.5);
+insert into rate values('5','kangs-korean-restaurant-ann-arbor-2','','',3.5);
 insert into rate values('2','university-cafe-ann-arbor','','korean,cafes',4);
 insert into rate values('5','university-cafe-ann-arbor','','korean,cafes',3);
 insert into rate values('1','subway-ann-arbor-2','','sandwiches,hotdogs',3);
