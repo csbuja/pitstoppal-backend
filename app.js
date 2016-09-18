@@ -85,6 +85,8 @@ app.all('/api/survey', function(req,res){
 	}
 	console.log('Initialization Complete');
 });
+
+
 app.all('/api/rerate/:userid', function(req, res){
 
 	db.query('select * from rate where userid = ?', req.params.userid, function(err, survey){
