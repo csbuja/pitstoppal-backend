@@ -118,20 +118,23 @@ app.all('/api/get_rate/:userid', function (req,res) { //TODO - spencer and jing
 	var results = [];
 	var makeQueries = function (){
 		var deferred = Q.defer();
-		for(var i = 0; i < req.body.restaurants.length; i++){
-			driverNeeds.write_file(req.params.userid, req.body.restaurants[i])
-			.then(function(data){
-				results.push(data);
-				if (results.length == req.body.restaurants.length) deferred.resolve(results);
-			});
+		if(! _.isUndefined(req.body.restaurants)){
+			for(var i = 0; i < req.body.restaurants.length; i++){
+				driverNeeds.write_file(req.params.userid, req.body.restaurants[i])
+				.then(function(data){
+					results.push(data);
+					if (results.length == req.body.restaurants.length) deferred.resolve(results);
+				});
+			}
+		}	
+		else{
+			deferred.resolve(results);
 		}
 		return deferred.promise;
 	}
 	makeQueries().then(function(results){
 		//result will be a JSON string
 		res.send(JSON.stringify(results));
-
-
 	});
 
 });
