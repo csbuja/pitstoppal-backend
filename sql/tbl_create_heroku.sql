@@ -1,5 +1,5 @@
-CREATE DATABASE IF NOT EXISTS eecs498;
-use eecs498
+CREATE DATABASE IF NOT EXISTS heroku_5dc52f2194d539a;
+use heroku_5dc52f2194d539a
 drop table if exists sensordata;
 drop table if exists user_res;
 drop table if exists restaurant;
@@ -33,6 +33,3 @@ create table sensordata(
 	foreign key (userid) references user(userid) on delete cascade
 	
 );
-
-#insert into user (userid) values (0);
-#insert an root user with userid 0;

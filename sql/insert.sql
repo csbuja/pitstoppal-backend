@@ -1,8 +1,16 @@
+#Notes:
+#This works for local and remote.
+
+#Authors:
 #flavio
 #spence
 #chris
 #austin
 #jing
+
+#on remote and local just run:
+# source insert.sql
+
 delete from user;
 delete from rate;
 insert into user values('5');
@@ -12,7 +20,7 @@ insert into user values('3');
 insert into user values('1290115437671776');
 insert into rate values('2','rich-j-c-korean-restaurant-ann-arbor-2','','korean',5,1);
 insert into rate values('1290115437671776','rich-j-c-korean-restaurant-ann-arbor-2','','korean',3,1);
-insert into rate values('5','rich-j-c-korean-restaurant-ann-arbor-2','','korean',3),1;
+insert into rate values('5','rich-j-c-korean-restaurant-ann-arbor-2','','korean',3,1);
 insert into rate values('2','kangs-korean-restaurant-ann-arbor-2','','',3.5,1);
 insert into rate values('5','kangs-korean-restaurant-ann-arbor-2','','',3.5,1);
 insert into rate values('2','university-cafe-ann-arbor','','korean,cafes',4,1);
