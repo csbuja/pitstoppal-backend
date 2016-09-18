@@ -37,6 +37,9 @@ function toMiles(km){
 	return km * 0.621371;
 }
 
+app.get("/",function(req,res){
+	res.send("Welcome to Pitstop Pal. Look at app.js to see the endpoints you want to use.");
+})
 
 
 app.all('/api/check/survey/:userid', function(req, res){
