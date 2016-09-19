@@ -46,6 +46,14 @@ con.connect(function(err){
 				return;
 	};
 	console.log('Connection established');
+
+
+	//keep connection alive or cleardb messes up
+	if (!_.isUndefined(process.env.CLEARDB_DATABASE_URL) ) {
+		setInterval(function () {
+	    db.query('SELECT 1');
+		}, 5000);
+	}
 });
 
 
