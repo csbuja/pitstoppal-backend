@@ -42,6 +42,7 @@ app.get("/",function(req,res){
 })
 
 
+//Is there a survey or not?
 app.all('/api/check/survey/:userid', function(req, res){
 	db.query('SELECT userid from user where userid = ?', req.params.userid, function(err, result) {
 		if (err){
@@ -86,7 +87,7 @@ app.all('/api/survey', function(req,res){
 	console.log('Initialization Complete');
 });
 
-
+//For now, never called.
 app.all('/api/rerate/:userid', function(req, res){
 
 	db.query('select * from rate where userid = ?', req.params.userid, function(err, survey){
@@ -119,7 +120,7 @@ app.all('/api/rate/:userid/', function(req,res){
 
 });
 
-app.all('/api/get_rate/:userid', function (req,res) { //TODO - spencer and jing
+app.all('/api/get_rate/:userid', function (req,res) { 
 	var results = [];
 	var makeQueries = function (){
 		var deferred = Q.defer();

@@ -68,7 +68,8 @@ def sim(R,i,j):
 ##ground_truth - np array of float
 ##predicted - np array of float
 def MSE(ground_truth,predicted):
-    return (1/float(len(ground_truth)))*np.dot(ground_truth - predicted,ground_truth - predicted)
+    arr = ground_truth - predicted
+    return (1/float(len(arr)))*np.dot(arr,arr)
 
 #makes calling pred more natural - as it is done in the math
 def pred_usability_wrapper(R,user_index,restaurant_index):
