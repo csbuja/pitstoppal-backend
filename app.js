@@ -32,7 +32,6 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 
-
 function toMiles(km){
 	return km * 0.621371;
 }
@@ -57,7 +56,7 @@ app.all('/api/check/survey/:userid', function(req, res){
 	});
 });
 
-
+//set survey results
 //Assumption: This is only called after completing a survey.
 app.all('/api/survey', function(req,res){ 
 
@@ -88,6 +87,8 @@ app.all('/api/survey', function(req,res){
 });
 
 //For now, never called.
+//This is not used. 
+//To do: deprecate 
 app.all('/api/rerate/:userid', function(req, res){
 
 	db.query('select * from rate where userid = ?', req.params.userid, function(err, survey){
@@ -100,6 +101,8 @@ app.all('/api/rerate/:userid', function(req, res){
 	});
 });
 
+
+//sets the rate for the usrs
 app.all('/api/rate/:userid/', function(req,res){
 
 	var term = {
@@ -120,6 +123,7 @@ app.all('/api/rate/:userid/', function(req,res){
 
 });
 
+//gets the rate for the users
 app.all('/api/get_rate/:userid', function (req,res) { 
 	var results = [];
 	var makeQueries = function (){
@@ -145,6 +149,7 @@ app.all('/api/get_rate/:userid', function (req,res) {
 
 });
 
+//todo: deprecate
 app.all('/api/test/', function(req,res){
 	var b = req.body.id;
 	var tmp = [];
