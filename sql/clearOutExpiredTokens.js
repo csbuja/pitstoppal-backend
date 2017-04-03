@@ -7,6 +7,7 @@ var socket_path = "";
 var database_name = "";
 var extra_mysql_options = {}
 var con = null;
+var Q = require( "q" ); // v2.11.1
 
 
 if (_.isUndefined(process.env.CLEARDB_DATABASE_URL) ){//  local
@@ -35,19 +36,28 @@ else { //on heroku server - FIX THIS
   pool = mysql.createPool(process.env.CLEARDB_DATABASE_URL);
 } 
 
+var db = {
+    query: function( sql, params ) {
 
-pool.connect(function(err){
-	pool.getConnection(function(err, connection){
-		connection.query('DELETE FROM accesstoken WHERE tokenExpirationDate < now()', function(err, result) {
-		if (err){
-			console.log(err)
-		}
-		else {
-			console.log('done');
-		}
+        var deferred = Q.defer();
 
-		});
-		connection.release();
-	});
+        pool.query( sql, params, deferred.makeNodeResolver());
+
+        return( deferred.promise );
+
+    }
+};
+
+var promise = db
+            .query(
+				'DELETE FROM accesstoken WHERE tokenExpirationDate < now()'
+            )
+.then(
+function handleSettled( data ) {
+        pool.end();
+
 });
+
+
+
 
