@@ -6,6 +6,7 @@ db.query('DELETE FROM accesstoken WHERE tokenExpirationDate < now()', function(e
 	}
 	else {
 		console.log('done');
-		db.destroy();
 	}
+	db.end();
 });
+
