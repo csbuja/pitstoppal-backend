@@ -44,7 +44,7 @@ con.connect(function(err){
 	else {
 		console.log('done');
 	}
-	db.end(function(){
+	con.end(function(){
 
 	});
 });
