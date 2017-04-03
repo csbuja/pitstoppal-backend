@@ -1,11 +1,11 @@
 CREATE DATABASE IF NOT EXISTS heroku_5dc52f2194d539a;
 use heroku_5dc52f2194d539a
 drop table if exists sensordata;
-drop table if exists user_res;
-drop table if exists restaurant;
 drop table if exists user;
 drop table if exists survey;
 drop table if exists rate;
+drop table if exists accesstoken;
+
 create table user(
 	userid varchar(255) not null primary key
 );
@@ -32,4 +32,12 @@ create table sensordata(
 	primary key (userid, time),
 	foreign key (userid) references user(userid) on delete cascade
 	
+);
+
+create table accesstoken(
+	userid varchar(255) not null,
+	token varchar(255) not null,
+	tokenExpirationDate timestamp not null,
+	primary key(token),
+	foreign key (userid) references user(userid) on delete cascade
 );

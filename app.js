@@ -86,20 +86,6 @@ app.all('/api/survey', function(req,res){
 	console.log('Initialization Complete');
 });
 
-//For now, never called.
-//This is not used. 
-//To do: deprecate 
-app.all('/api/rerate/:userid', function(req, res){
-
-	db.query('select * from rate where userid = ?', req.params.userid, function(err, survey){
-		if (err) throw err;
-		else{
-			res.send({"method1" :driverNeeds.rate_cosine(req.body.businesses, survey),
-			"method2":driverNeeds.rate_sim(req.body.businesses, survey),
-			"method3":driverNeeds.rate_weigh(req.body.businesses, survey) });
-		}
-	});
-});
 
 
 //sets the rate for the usrs
@@ -146,27 +132,6 @@ app.all('/api/get_rate/:userid', function (req,res) {
 		//result will be a JSON string
 		res.send(JSON.stringify(results));
 	});
-
-});
-
-//todo: deprecate
-app.all('/api/test/', function(req,res){
-	var b = req.body.id;
-	var tmp = [];
-	for(var i = 0; i < b.length; ++i){
-		yelp.business(b[i],function(err, data){
-			if (err){
-				res.send("not");
-			}else{
-				var info = [];
-				for(var j = 0; j < data.categories.length; j++){
-					info.push(data.categories[j][1]);
-				}
-				console.log("\'" + data.id.toString()+"\':\'" + info.toString() + "\',");
-			}
-		});
-	}
-
 
 });
 

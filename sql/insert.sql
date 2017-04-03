@@ -131,3 +131,5 @@ insert into rate values('2','no-thai-ann-arbor','','thai',3,1);
 insert into rate values('3','no-thai-ann-arbor','','thai',3,1);
 insert into rate values('1290115437671776','no-thai-ann-arbor','','thai',3,1);
 
+
+insert into accesstoken values('1','EAAPcTi4JTxUBAMZAorviYZCCTTr18KGZCKCaUiZAYRZBRwTXtglWTvcyt6g1lZAKicKuyTN2OjFAmMrs70dgoXZATqKH6OrtKKbFTY0uBOyQZApsO2SHX6oGl0199BzB2jybbbar25f2RZCpyEbpMyNNxaZC00O1aagZAdEOEl5i9O8C4wF8Aqp8s5YryZCvAfCdRZBMZD',now());

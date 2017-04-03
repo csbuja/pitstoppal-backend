@@ -1,8 +1,6 @@
 CREATE DATABASE IF NOT EXISTS eecs498;
 use eecs498
 drop table if exists sensordata;
-drop table if exists user_res;
-drop table if exists restaurant;
 drop table if exists user;
 drop table if exists survey;
 drop table if exists rate;
@@ -32,4 +30,12 @@ create table sensordata(
 	primary key (userid, time),
 	foreign key (userid) references user(userid) on delete cascade
 	
+);
+
+create table accesstoken(
+	userid varchar(255) not null,
+	token varchar(255) not null,
+	tokenExpirationDate timestamp not null,
+	primary key(token),
+	foreign key (userid) references user(userid) on delete cascade
 );
