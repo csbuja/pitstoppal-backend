@@ -32,21 +32,22 @@ else { //on heroku server - FIX THIS
 	// parts of url -- mysql://user:pass@hostname/DB?reconnect=true
 	
 
-	con = mysql.createConnection(process.env.CLEARDB_DATABASE_URL);
+  pool = mysql.createPool(process.env.CLEARDB_DATABASE_URL);
 } 
 
 
-con.connect(function(err){
-	con.query('DELETE FROM accesstoken WHERE tokenExpirationDate < now()', function(err, result) {
-	if (err){
-		console.log(err)
-	}
-	else {
-		console.log('done');
-	}
-	con.end(function(){
+pool.connect(function(err){
+	pool.getConnection(function(err, connection){
+		connection.query('DELETE FROM accesstoken WHERE tokenExpirationDate < now()', function(err, result) {
+		if (err){
+			console.log(err)
+		}
+		else {
+			console.log('done');
+		}
 
+		});
+		connection.release();
 	});
-});
 });
 
