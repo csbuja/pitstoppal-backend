@@ -52,7 +52,7 @@ con.connect(function(err){
 	if (!_.isUndefined(process.env.CLEARDB_DATABASE_URL) ) {
 		setInterval(function () {
 	    con.query('SELECT 1');
-		}, 1000);
+		}, 5000);
 	}
 });
 
