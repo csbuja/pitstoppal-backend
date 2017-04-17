@@ -12,6 +12,9 @@ var moment = require('moment');
 var _ = require('underscore');
 var fs = require('fs');
 var Q = require('q')
+var request = require('request');
+
+var FB_APP_ID = "1086653268053781";
 
 var Yelp = require('yelp');
 var yelp = new Yelp({
@@ -30,6 +33,33 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 // parse application/json
 app.use(bodyParser.json());
+
+
+app.all("/api/login",function(req,res){
+	var token = req.body.token
+	var userid = req.body.userid
+	if(token && userid){
+		//https://graph.facebook.com/oauth/access_token_info?client_id=1086653268053781&access_token=EAAPcTi4JTxUBAB6SRrJyTwAXN0hBkWIYvBe7s4tubgAZCyD1g…wzGTolVDqzufZCVH0QUuCet2bgMN3b3dyrixKpjVVjpFZCUZD
+		checkurl = "https://graph.facebook.com/oauth/access_token_info?client_id=" + FB_APP_ID+ "&access_token=" + token;
+		request.get(checkurl,function(e,r){
+			if(!e && r.statusCode == 200){
+				d = new Date();
+				db.query("INSERT into accesstoken values(" + userid ",DATE_FORMAT("+ d.toISOString().slice(0,x.toISOString().length -1) + "), '%Y-%m-%dT%T')",function(e){
+					if (e){
+						throw e;
+					}
+				});
+			}
+			else{
+				res.send('Denied! You need to give a valid token.')
+			}
+		});
+	}
+	else
+	{
+		res.send('Denied! You need to give a valid token.')
+	}
+})
 
 
 function toMiles(km){
