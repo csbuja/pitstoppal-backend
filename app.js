@@ -44,9 +44,13 @@ app.all("/api/login",function(req,res){
 		request.get(checkurl,function(e,r){
 			if(!e && r.statusCode == 200){
 				d = new Date();
-				db.query("INSERT into accesstoken values(" + userid ",DATE_FORMAT("+ d.toISOString().slice(0,x.toISOString().length -1) + "), '%Y-%m-%dT%T')",function(e){
+				db.query("INSERT into accesstoken values(" + userid +",DATE_FORMAT("+ d.toISOString().slice(0,d.toISOString().length -1) + "), '%Y-%m-%dT%T')",function(e){
 					if (e){
 						throw e;
+						res.send("dberror");
+					}
+					else{
+						res.send("logged in!")
 					}
 				});
 			}
@@ -59,7 +63,7 @@ app.all("/api/login",function(req,res){
 	{
 		res.send('Denied! You need to give a valid token.')
 	}
-})
+});
 
 
 function toMiles(km){
