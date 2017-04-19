@@ -47,7 +47,24 @@ function checkIfTokenIsValid(token){
 	return deferred.promise;
 }
 
+function removeToken(token){
+	db.query('DELETE from accesstoken where token = ?', [token], function(err,result){
 
+	});
+}
+
+app.all("/api/logout",function(req,res){
+	token = req.body.token;
+	checkIfTokenIsValid().then(function(tokenValidity){
+		if(!token || !tokenValidity) {
+			res.send("Invalid Token")
+			return;
+		}
+		else {
+			res.send('Login Token Removed.')
+		}
+	});
+});
 
 app.all("/api/login",function(req,res){
 	var token = req.body.token
@@ -66,9 +83,10 @@ app.all("/api/login",function(req,res){
 				//res.send("Logged In!")
 				request.get(checkurl,function(e,r){
 					if(!e && r.statusCode == 200){
-						d = new Date();
-						query = "INSERT into accesstoken values(" + userid +",DATE_FORMAT("+ d.toISOString().slice(0,d.toISOString().length -1) + "), '%Y-%m-%dT%T')";
-						db.query(query,function(e){
+						var d = new Date();
+						var datestring = d.toISOString().slice(0,d.toISOString().length -1); 
+						var query = "INSERT into accesstoken values(?,?,DATE_FORMAT(?, '%Y-%m-%dT%T'))";
+						db.query(query,[userid,token,datestring] ,function(e){
 							if (e){
 								throw e;
 								res.send("dberror");
