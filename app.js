@@ -35,33 +35,57 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 
+function checkIfTokenIsValid(token){
+	var deferred = Q.defer();
+	db.query('SELECT token from accesstoken where token = ?', token, function(err,result){
+		if (err){
+			throw err
+		}else{
+				deferred.resolve(result.length !==0)
+		}
+	});
+	return deferred.promise;
+}
+
+
+
 app.all("/api/login",function(req,res){
 	var token = req.body.token
 	var userid = req.body.userid
-	if(token && userid){
-		//https://graph.facebook.com/oauth/access_token_info?client_id=1086653268053781&access_token=EAAPcTi4JTxUBAB6SRrJyTwAXN0hBkWIYvBe7s4tubgAZCyD1g…wzGTolVDqzufZCVH0QUuCet2bgMN3b3dyrixKpjVVjpFZCUZD
-		checkurl = "https://graph.facebook.com/oauth/access_token_info?client_id=" + FB_APP_ID+ "&access_token=" + token;
-		request.get(checkurl,function(e,r){
-			if(!e && r.statusCode == 200){
-				d = new Date();
-				db.query("INSERT into accesstoken values(" + userid +",DATE_FORMAT("+ d.toISOString().slice(0,d.toISOString().length -1) + "), '%Y-%m-%dT%T')",function(e){
-					if (e){
-						throw e;
-						res.send("dberror");
+
+	//if token already in DB (which shouldn't happen,)
+
+				
+    if(token && userid){
+		checkIfTokenIsValid().then(function(tokenInDBAlready){
+			if(tokenInDBAlready) {
+				res.send("Logged In!")
+			}
+			else {
+				//https://graph.facebook.com/oauth/access_token_info?client_id=1086653268053781&access_token=EAAPcTi4JTxUBAB6SRrJyTwAXN0hBkWIYvBe7s4tubgAZCyD1g…wzGTolVDqzufZCVH0QUuCet2bgMN3b3dyrixKpjVVjpFZCUZD
+				checkurl = "https://graph.facebook.com/oauth/access_token_info?client_id=" + FB_APP_ID+ "&access_token=" + token;
+				request.get(checkurl,function(e,r){
+					if(!e && r.statusCode == 200){
+						d = new Date();
+						db.query("INSERT into accesstoken values(" + userid +",DATE_FORMAT("+ d.toISOString().slice(0,d.toISOString().length -1) + "), '%Y-%m-%dT%T')",function(e){
+							if (e){
+								throw e;
+								res.send("dberror");
+							}
+							else{
+								res.send("Logged In!")
+							}
+						});
 					}
 					else{
-						res.send("logged in!")
+						res.send('Denied! Facebook says no.')
 					}
-				});
-			}
-			else{
-				res.send('Denied! You need to give a valid token.')
+				});	
 			}
 		});
 	}
-	else
-	{
-		res.send('Denied! You need to give a valid token.')
+	else {
+		res.send('Denied! You need to give us a unique token and an identification number for the user.')
 	}
 });
 
