@@ -48,22 +48,27 @@ function checkIfTokenIsValid(token){
 }
 
 function removeToken(token){
+	
+	var deferred = Q.defer();
 	db.query('DELETE from accesstoken where token = ?', [token], function(err,result){
-
+		if (err){
+			throw err
+		}else{
+				deferred.resolve(result.length !==0)
+		}
 	});
+	return deferred.promise;
 }
 
 app.all("/api/logout",function(req,res){
 	token = req.body.token;
-	checkIfTokenIsValid().then(function(tokenValidity){
-		if(!token || !tokenValidity) {
-			res.send("Invalid Token")
-			return;
-		}
-		else {
-			res.send('Login Token Removed.')
-		}
-	});
+	
+	if(token){
+		removeToken(token).then(function(){
+			res.send("Deletion query ran, though didn't necessarily delete anything.")
+		})
+	}
+	
 });
 
 app.all("/api/login",function(req,res){
