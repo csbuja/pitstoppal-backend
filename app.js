@@ -34,7 +34,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // parse application/json
 app.use(bodyParser.json());
 
-
+//implement this everywhere and then make sure the frontend works with it
 function checkIfTokenIsValid(token){
 	var deferred = Q.defer();
 	db.query('SELECT * from accesstoken where token = ?', [token], function(err,result){
