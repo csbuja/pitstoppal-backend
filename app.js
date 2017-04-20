@@ -124,23 +124,39 @@ app.get("/",function(req,res){
 
 
 //Is there a survey or not?
-app.all('/api/check/survey/:userid', function(req, res){
-	db.query('SELECT userid from user where userid = ?', req.params.userid, function(err, result) {
-		if (err){
-			throw err
-		}else{
-			if(result.length == 0){
-				res.send('No survey');
+app.all('/api/survey/check/:userid', function(req, res){
+	token = req.body.token;
+	checkIfTokenIsValid().then(function(tokenValidity){
+		if(!token || !tokenValidity) {
+			res.send("Invalid Token")
+			return;
+		} else {
+			db.query('SELECT userid from user where userid = ?', req.params.userid, function(err, result) {
+			if (err){
+				throw err
 			}else{
-				res.send('Existing survey');
+				if(result.length == 0){
+					res.send('No survey');
+				}else{
+					res.send('Existing survey');
+				}
 			}
-		}
+			});
+	}
 	});
 });
 
 //set survey results
 //Assumption: This is only called after completing a survey.
-app.all('/api/survey', function(req,res){ 
+app.all('/api/survey/set', function(req,res){ 
+token = req.body.token;
+	checkIfTokenIsValid().then(function(tokenValidity){
+		if(!token || !tokenValidity) {
+			res.send("Invalid Token")
+			return;
+		}
+		else {
+
 
 	//by above assumption, 
 	DATA_IS_FROM_SURVEY = true;
@@ -166,100 +182,146 @@ app.all('/api/survey', function(req,res){
 		driverNeeds.insert_rate(term);
 	}
 	console.log('Initialization Complete');
-});
-
-
-
-//sets the rate for the usrs
-app.all('/api/rate/:userid/', function(req,res){
-
-	var term = {
-		userid: req.params.userid,
-		restaurant_id: req.body.id,
-		name: req.body.name,
-		rate: req.body.rating,
-		foodtype: (req.body.categories).toString(),
-		from_survey: req.body.from_survey
-	};
-	var dup = {
-		rate: req.body.rate
-	};
-	db.query('INSERT INTO rate SET ? ON DUPLICATE KEY UPDATE rate=VALUES(rate)', term, function(err, result) { 
-		if (err) throw err;
-		else res.send('Data sent');
-	});
-
-});
-
-//gets the rate for the users
-app.all('/api/get_rate/:userid', function (req,res) { 
-	var results = [];
-	var makeQueries = function (){
-		var deferred = Q.defer();
-		if(! _.isUndefined(req.body.restaurants)){
-			for(var i = 0; i < req.body.restaurants.length; i++){
-				driverNeeds.write_file(req.params.userid, req.body.restaurants[i])
-				.then(function(data){
-					results.push(data);
-					if (results.length == req.body.restaurants.length) deferred.resolve(results);
-				});
-			}
-		}	
-		else{
-			deferred.resolve(results);
-		}
-		return deferred.promise;
 	}
-	makeQueries().then(function(results){
-		//result will be a JSON string
-		res.send(JSON.stringify(results));
-	});
-
 });
-
-//insert sensor data into sensordata table
-app.all('/api/sensordata/:lat/:lon/:status/:userid', function(req,res) {
-	//for speed maybe
-	var post = {userid: req.params.userid,lon:req.params.lon, lat:req.params.lat, status:req.params.status};
-	var query = db.query('INSERT INTO sensordata SET ?', post, function(err, result) {
-	if (err) throw err;
-	});
-	res.send('Data sent');
 });
 
 
-app.get('/api/search/:lat/:lon/:name/:location?', (req, res) => {
-    var lat = req.params.lat;
-    var lon = req.params.lon;
-    var location = req.params.location;
-    var search = 'food+' + req.params.name;
-    var params = {
-        term: search,
-    };
+//TO DELETE
+//sets the rate for the usrs
+// app.all('/api/rate/:userid/', function(req,res){
+// 	token = req.body.token;
+// 	checkIfTokenIsValid().then(function(tokenValidity){
+// 		if(!token || !tokenValidity) {
+// 			res.send("Invalid Token")
+// 			return;
+// 		}
+// 		else{
+// 	var term = {
+// 		userid: req.params.userid,
+// 		restaurant_id: req.body.id,
+// 		name: req.body.name,
+// 		rate: req.body.rating,
+// 		foodtype: (req.body.categories).toString(),
+// 		from_survey: req.body.from_survey
+// 	};
+// 	var dup = {
+// 		rate: req.body.rate
+// 	};
+// 	db.query('INSERT INTO rate SET ? ON DUPLICATE KEY UPDATE rate=VALUES(rate)', term, function(err, result) { 
+// 		if (err) throw err;
+// 		else res.send('Data sent');
+// 	});
+// 	}
+// });
+// });
 
-    if (location) {
-        params.location = location;
-    }
-    else {
-        params.ll = (lat + ',' + lon);
-    }
+//TO DELETE
+//apparently it's not used right now so frontend hasn't been updated here!!!!
+//gets the rate for the users
+// app.all('/api/get_rate/:userid', function (req,res) { 
+// 	token = req.body.token;
+// 	checkIfTokenIsValid().then(function(tokenValidity){
+// 		if(!token || !tokenValidity) {
+// 			res.send("Invalid Token")
+// 			return;
+// 		}
+// 		else{
+// 	var results = [];
+// 	var makeQueries = function (){
+// 		var deferred = Q.defer();
+// 		if(! _.isUndefined(req.body.restaurants)){
+// 			for(var i = 0; i < req.body.restaurants.length; i++){
+// 				driverNeeds.write_file(req.params.userid, req.body.restaurants[i])
+// 				.then(function(data){
+// 					results.push(data);
+// 					if (results.length == req.body.restaurants.length) deferred.resolve(results);
+// 				});
+// 			}
+// 		}	
+// 		else{
+// 			deferred.resolve(results);
+// 		}
+// 		return deferred.promise;
+// 	}
+// 	makeQueries().then(function(results){
+// 		//result will be a JSON string
+// 		res.send(JSON.stringify(results));
+// 	});
+// 	}
+// });
+// });
 
-    yelp.search(params)
-    .then((data) => {
-        // need further error checking, succesful request but failed response
-        // getYelpBusinesses data retrieval may need to be changed
-        res.send(JSON.stringify(driverNeeds.getYelpBusinesses(data, lat, lon)));
-    })
-    .catch((error) => {
-        // 'error' is the actual error type recognized by fetch
-        res.status(500).send('error');
-    });
-});
+// //insert sensor data into sensordata table
+// app.all('/api/sensordata/:lat/:lon/:status/:userid', function(req,res) {
+// 	token = req.body.token;
+// 	checkIfTokenIsValid().then(function(tokenValidity){
+// 		if(!token || !tokenValidity) {
+// 			res.send("Invalid Token")
+// 			return;
+// 		}
+// 		else{
+// 	//for speed maybe
+// 	var post = {userid: req.params.userid,lon:req.params.lon, lat:req.params.lat, status:req.params.status};
+// 	var query = db.query('INSERT INTO sensordata SET ?', post, function(err, result) {
+// 	if (err) throw err;
+// 	});
+// 	res.send('Data sent');
+// 	}
+// })
+// });
+
+
+// app.get('/api/search/:lat/:lon/:name/:location?', (req, res) => {
+// 	token = req.body.token;
+// 	checkIfTokenIsValid().then(function(tokenValidity){
+// 		if(!token || !tokenValidity) {
+// 			res.send("Invalid Token")
+// 			return;
+// 		}
+// 		else{
+//     var lat = req.params.lat;
+//     var lon = req.params.lon;
+//     var location = req.params.location;
+//     var search = 'food+' + req.params.name;
+//     var params = {
+//         term: search,
+//     };
+
+//     if (location) {
+//         params.location = location;
+//     }
+//     else {
+//         params.ll = (lat + ',' + lon);
+//     }
+
+//     yelp.search(params)
+//     .then((data) => {
+//         // need further error checking, succesful request but failed response
+//         // getYelpBusinesses data retrieval may need to be changed
+//         res.send(JSON.stringify(driverNeeds.getYelpBusinesses(data, lat, lon)));
+//     })
+//     .catch((error) => {
+//         // 'error' is the actual error type recognized by fetch
+//         res.status(500).send('error');
+//     });
+// 	}
+// })
+// });
 
 // both currentPosition and lastPosition are objects with latitude and longitude
 // latitude and longitude may be null
 //return the restaurant within radius = 40000
-app.get('/api/yelp/:currentPosition/:lastPosition/:userid',function (req, res) {
+
+//called by SwiperContainerMixin
+app.get('/api/food/:currentPosition/:lastPosition/:userid',function (req, res) {
+	token = req.body.token;
+	checkIfTokenIsValid().then(function(tokenValidity){
+		if(!token || !tokenValidity) {
+			res.send("Invalid Token")
+			return;
+		}
+		else{
 	var currentPosition = JSON.parse(req.params.currentPosition);
 	var radius = 40000; //max 40000 meters
 	console.log("queried yelp")
@@ -310,15 +372,23 @@ app.get('/api/yelp/:currentPosition/:lastPosition/:userid',function (req, res) {
 						res.send(JSON.stringify(yelpdata));
 					});
 				}
-
 		}
 	);
+	}
+});
 });
 
 // both currentPosition and lastPosition are objects with latitude and longitude
 // latitude and longitude may be null
 //return the gas station within radius = 25 miles
 app.get('/api/gas/:currentPosition/:lastPosition',function (req, res) {
+	token = req.body.token;
+	checkIfTokenIsValid().then(function(tokenValidity){
+		if(!token || !tokenValidity) {
+			res.send("Invalid Token")
+			return;
+		}
+		else{
     var currentPosition = JSON.parse(req.params.currentPosition);
 	var radius = 25;//rad || 15; //miles
 
@@ -328,6 +398,8 @@ app.get('/api/gas/:currentPosition/:lastPosition',function (req, res) {
         radius,
         res
     );
+	}
+});	
 });
 
 console.log('App running on port: ' + port);
