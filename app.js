@@ -42,6 +42,7 @@ function checkIfTokenIsValid(token){
 			throw err
 		}else{
 				deferred.resolve(result.length !==0)
+				console.log(result)
 		}
 	});
 	return deferred.promise;
@@ -128,7 +129,7 @@ app.all('/api/survey/check/:userid', function(req, res){
 	token = req.body.token;
 	checkIfTokenIsValid().then(function(tokenValidity){
 		if(!token || !tokenValidity) {
-			res.send("Invalid Token")
+			res.send("Invalid Token" )
 			return;
 		} else {
 			db.query('SELECT userid from user where userid = ?', req.params.userid, function(err, result) {
