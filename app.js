@@ -37,12 +37,11 @@ app.use(bodyParser.json());
 //implement this everywhere and then make sure the frontend works with it
 function checkIfTokenIsValid(token){
 	var deferred = Q.defer();
-	db.query('SELECT * from accesstoken where token = ?', [token], function(err,result){
+	db.query('SELECT token from accesstoken where token = ? ', [token],function(err,result){
 		if (err){
 			throw err
 		}else{
-				deferred.resolve(result.length !==0)
-				console.log(result)
+				deferred.resolve(result.length !==0);
 		}
 	});
 	return deferred.promise;
@@ -62,7 +61,7 @@ function removeToken(token){
 }
 
 app.all("/api/logout",function(req,res){
-	token = req.body.token;
+	var token = req.body.token;
 	
 	if(token){
 		removeToken(token).then(function(){
@@ -79,7 +78,7 @@ app.all("/api/login",function(req,res){
 
 				
     if(token && userid){
-		checkIfTokenIsValid().then(function(tokenInDBAlready){
+		checkIfTokenIsValid(token).then(function(tokenInDBAlready){
 			if(tokenInDBAlready) {
 				res.send("Logged In!")
 			}
@@ -92,6 +91,7 @@ app.all("/api/login",function(req,res){
 						var d = new Date();
 						var datestring = d.toISOString().slice(0,d.toISOString().length -1); 
 						var query = "INSERT into accesstoken values(?,?,DATE_FORMAT(?, '%Y-%m-%dT%T'))";
+						console.log("inserting into DB")
 						db.query(query,[userid,token,datestring] ,function(e){
 							if (e){
 								throw e;
@@ -126,8 +126,8 @@ app.get("/",function(req,res){
 
 //Is there a survey or not?
 app.all('/api/survey/check/:userid', function(req, res){
-	token = req.body.token;
-	checkIfTokenIsValid().then(function(tokenValidity){
+	var token = req.body.token;
+	checkIfTokenIsValid(token).then(function(tokenValidity){
 		if(!token || !tokenValidity) {
 			res.send("Invalid Token" )
 			return;
@@ -150,8 +150,8 @@ app.all('/api/survey/check/:userid', function(req, res){
 //set survey results
 //Assumption: This is only called after completing a survey.
 app.all('/api/survey/set', function(req,res){ 
-token = req.body.token;
-	checkIfTokenIsValid().then(function(tokenValidity){
+var token = req.body.token;
+	checkIfTokenIsValid(token).then(function(tokenValidity){
 		if(!token || !tokenValidity) {
 			res.send("Invalid Token")
 			return;
@@ -315,9 +315,9 @@ token = req.body.token;
 //return the restaurant within radius = 40000
 
 //called by SwiperContainerMixin
-app.get('/api/food/:currentPosition/:lastPosition/:userid',function (req, res) {
-	token = req.body.token;
-	checkIfTokenIsValid().then(function(tokenValidity){
+app.all('/api/food/:currentPosition/:userid',function (req, res) {
+	var token = req.body.token;
+	checkIfTokenIsValid(token).then(function(tokenValidity){
 		if(!token || !tokenValidity) {
 			res.send("Invalid Token")
 			return;
@@ -382,9 +382,9 @@ app.get('/api/food/:currentPosition/:lastPosition/:userid',function (req, res) {
 // both currentPosition and lastPosition are objects with latitude and longitude
 // latitude and longitude may be null
 //return the gas station within radius = 25 miles
-app.get('/api/gas/:currentPosition/:lastPosition',function (req, res) {
-	token = req.body.token;
-	checkIfTokenIsValid().then(function(tokenValidity){
+app.all('/api/gas/:currentPosition',function (req, res) {
+	var token = req.body.token;
+	checkIfTokenIsValid(token).then(function(tokenValidity){
 		if(!token || !tokenValidity) {
 			res.send("Invalid Token")
 			return;
