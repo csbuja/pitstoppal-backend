@@ -272,43 +272,45 @@ var token = req.body.token;
 // })
 // });
 
+//used to get pitstops for the survey
+app.all('/api/search/:lat/:lon/:name/:location?', (req, res) => {
+	token = req.body.token;
+	checkIfTokenIsValid().then(function(tokenValidity){
+		console.log(tokenValidity)
+		console.log(token)
+		if(!token || !tokenValidity) {
+			res.send("Invalid Token")
+			return;
+		}
+		else{
+    var lat = req.params.lat;
+    var lon = req.params.lon;
+    var location = req.params.location;
+    var search = 'food+' + req.params.name;
+    var params = {
+        term: search,
+    };
 
-// app.get('/api/search/:lat/:lon/:name/:location?', (req, res) => {
-// 	token = req.body.token;
-// 	checkIfTokenIsValid().then(function(tokenValidity){
-// 		if(!token || !tokenValidity) {
-// 			res.send("Invalid Token")
-// 			return;
-// 		}
-// 		else{
-//     var lat = req.params.lat;
-//     var lon = req.params.lon;
-//     var location = req.params.location;
-//     var search = 'food+' + req.params.name;
-//     var params = {
-//         term: search,
-//     };
+    if (location) {
+        params.location = location;
+    }
+    else {
+        params.ll = (lat + ',' + lon);
+    }
 
-//     if (location) {
-//         params.location = location;
-//     }
-//     else {
-//         params.ll = (lat + ',' + lon);
-//     }
-
-//     yelp.search(params)
-//     .then((data) => {
-//         // need further error checking, succesful request but failed response
-//         // getYelpBusinesses data retrieval may need to be changed
-//         res.send(JSON.stringify(driverNeeds.getYelpBusinesses(data, lat, lon)));
-//     })
-//     .catch((error) => {
-//         // 'error' is the actual error type recognized by fetch
-//         res.status(500).send('error');
-//     });
-// 	}
-// })
-// });
+    yelp.search(params)
+    .then((data) => {
+        // need further error checking, succesful request but failed response
+        // getYelpBusinesses data retrieval may need to be changed
+        res.send(JSON.stringify(driverNeeds.getYelpBusinesses(data, lat, lon)));
+    })
+    .catch((error) => {
+        // 'error' is the actual error type recognized by fetch
+        res.status(500).send('error');
+    });
+	}
+})
+});
 
 // both currentPosition and lastPosition are objects with latitude and longitude
 // latitude and longitude may be null
