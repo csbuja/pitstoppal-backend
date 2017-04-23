@@ -1,13 +1,15 @@
 CREATE DATABASE IF NOT EXISTS eecs498;
 use eecs498
 drop table if exists sensordata;
-drop table if exists user;
+
 drop table if exists survey;
 drop table if exists rate;
-create table user(
-	userid varchar(255) not null primary key
-);
+drop table if exists user;
 
+create table user(
+	userid varchar(255) not null primary key,
+	hassurvey boolean not null
+);
 
 create table rate(
 	userid varchar(255) not null,

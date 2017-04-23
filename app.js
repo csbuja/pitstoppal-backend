@@ -41,29 +41,18 @@ function checkIfTokenIsValid(token){
 		if (err){
 			throw err
 		}else{
+				console.log('shit')
+				console.log(result);
+				console.log(token)
 				deferred.resolve(result.length !==0);
 		}
 	});
 	return deferred.promise;
 }
 
-//retturns if the user already exists
-function isUserInDB(userid) {
+function addUserIfDoesntExist(userid){
 	var deferred = Q.defer();
-	db.query('SELECT * from user where userid = ?', [userid], function(err, result) {
-			if (err) throw err;
-			else {
-				deferred.resolve(result.length !== 0)
-			}
-	});
-	return deferred.promise;
-}
-
-function addUser(userid){
-	var deferred = Q.defer();
-	var post = {userid: req.body.userID};
-	console.log('user added')
-	db.query('INSERT INTO user SET ?', post, function(err, result) {
+	db.query('insert into user (userid,hassurvey) values (?,0) on duplicate key update userid = ?', [userid,userid], function(err, result) {
 			if (err) throw err;
 			else {
 				deferred.resolve(true)
@@ -102,18 +91,7 @@ app.all("/api/login",function(req,res){
 	//if token already in DB (which shouldn't happen,)
 	
     if(token && userid){
-    	isUserInDB(userid).then(function(userisindb){
-			var deferred = Q.defer();
-			if(! userisindb){
-				console.log('about to add user')
-				addUser(userid).then(function(){
-					deferred.resolve(true);
-				});
-			}else {
-				deferred.resolve(true);
-			}
-			return deferred.promise;
-		}).then(function(){
+    	addUserIfDoesntExist(userid).then(function(){
 			checkIfTokenIsValid(token).then(function(tokenInDBAlready){
 				if(tokenInDBAlready) {
 					res.send("Logged In!")
@@ -169,11 +147,11 @@ app.all('/api/survey/check/:userid', function(req, res){
 			res.send("Invalid Token" )
 			return;
 		} else {
-			db.query('SELECT userid from user where userid = ?', req.params.userid, function(err, result) {
+			db.query('SELECT hassurvey from user where userid = ?', req.params.userid, function(err, result) {
 			if (err){
 				throw err
 			}else{
-				if(result.length == 0){
+				if(!result[0]['hassurvey']){
 					res.send('No survey');
 				}else{
 					res.send('Existing survey');
@@ -198,6 +176,9 @@ var token = req.body.token;
 
 	//by above assumption, 
 	DATA_IS_FROM_SURVEY = true;
+	db.query('insert into user (userid,hassurvey) values (?,1) on duplicate key update hassurvey= true', [userid], function(err, result) {
+			if (err) throw err;
+	});
 
 	console.log('Start Initializing');
 
