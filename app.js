@@ -41,9 +41,6 @@ function checkIfTokenIsValid(token){
 		if (err){
 			throw err
 		}else{
-				console.log('shit')
-				console.log(result);
-				console.log(token)
 				deferred.resolve(result.length !==0);
 		}
 	});
@@ -288,9 +285,7 @@ var token = req.body.token;
 //used to get pitstops for the survey
 app.all('/api/search/:lat/:lon/:name/:location?', (req, res) => {
 	token = req.body.token;
-	checkIfTokenIsValid().then(function(tokenValidity){
-		console.log('validity: ' + tokenValidity)
-		console.log('token: ' + token)
+	checkIfTokenIsValid(token).then(function(tokenValidity){
 		if(!token || !tokenValidity) {
 			res.send("Invalid Token")
 			return;
