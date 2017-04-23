@@ -289,8 +289,8 @@ var token = req.body.token;
 app.all('/api/search/:lat/:lon/:name/:location?', (req, res) => {
 	token = req.body.token;
 	checkIfTokenIsValid().then(function(tokenValidity){
-		console.log(tokenValidity)
-		console.log(token)
+		console.log('validity: ' + tokenValidity)
+		console.log('token: ' + token)
 		if(!token || !tokenValidity) {
 			res.send("Invalid Token")
 			return;
