@@ -50,10 +50,10 @@ function checkIfTokenIsValid(token){
 //retturns if the user already exists
 function isUserInDB(userid) {
 	var deferred = Q.defer();
-	db.query('SELECT from user where userid = ?', [userid], function(err, result) {
+	db.query('SELECT * from user where userid = ?', [userid], function(err, result) {
 			if (err) throw err;
 			else {
-				deferred.resolve(result)
+				deferred.resolve(result.length !== 0)
 			}
 	});
 	return deferred.promise;
@@ -62,6 +62,7 @@ function isUserInDB(userid) {
 function addUser(userid){
 	var deferred = Q.defer();
 	var post = {userid: req.body.userID};
+	console.log('user added')
 	db.query('INSERT INTO user SET ?', post, function(err, result) {
 			if (err) throw err;
 			else {
@@ -104,6 +105,7 @@ app.all("/api/login",function(req,res){
     	isUserInDB(userid).then(function(userisindb){
 			var deferred = Q.defer();
 			if(! userisindb){
+				console.log('about to add user')
 				addUser(userid).then(function(){
 					deferred.resolve(true);
 				});
