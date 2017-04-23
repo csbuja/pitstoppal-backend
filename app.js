@@ -47,6 +47,30 @@ function checkIfTokenIsValid(token){
 	return deferred.promise;
 }
 
+//retturns if the user already exists
+function isUserInDB(userid) {
+	var deferred = Q.defer();
+	db.query('SELECT from user where userid = ?', [userid], function(err, result) {
+			if (err) throw err;
+			else {
+				deferred.resolve(result)
+			}
+	});
+	return deferred.promise;
+}
+
+function addUser(userid){
+	var deferred = Q.defer();
+	var post = {userid: req.body.userID};
+	db.query('INSERT INTO user SET ?', post, function(err, result) {
+			if (err) throw err;
+			else {
+				deferred.resolve(true)
+			}
+	});
+	return deferred.promise;
+}
+
 function removeToken(token){
 	
 	var deferred = Q.defer();
@@ -75,38 +99,49 @@ app.all("/api/login",function(req,res){
 	var token = req.body.token
 	var userid = req.body.userid
 	//if token already in DB (which shouldn't happen,)
-
-				
+	
     if(token && userid){
-		checkIfTokenIsValid(token).then(function(tokenInDBAlready){
-			if(tokenInDBAlready) {
-				res.send("Logged In!")
+    	isUserInDB(userid).then(function(userisindb){
+			var deferred = Q.defer();
+			if(! userisindb){
+				addUser(userid).then(function(){
+					deferred.resolve(true);
+				});
+			}else {
+				deferred.resolve(true);
 			}
-			else {
-				//https://graph.facebook.com/oauth/access_token_info?client_id=1086653268053781&access_token=EAAPcTi4JTxUBAB6SRrJyTwAXN0hBkWIYvBe7s4tubgAZCyD1g…wzGTolVDqzufZCVH0QUuCet2bgMN3b3dyrixKpjVVjpFZCUZD
-				checkurl = "https://graph.facebook.com/oauth/access_token_info?client_id=" + FB_APP_ID+ "&access_token=" + token;
-				//res.send("Logged In!")
-				request.get(checkurl,function(e,r){
-					if(!e && r.statusCode == 200){
-						var d = new Date();
-						var datestring = d.toISOString().slice(0,d.toISOString().length -1); 
-						var query = "INSERT into accesstoken values(?,?,DATE_FORMAT(?, '%Y-%m-%dT%T'))";
-						console.log("inserting into DB")
-						db.query(query,[userid,token,datestring] ,function(e){
-							if (e){
-								throw e;
-								res.send("dberror");
-							}
-							else{
-								res.send("Logged In!")
-							}
-						});
-					}
-					else{
-						res.send('Denied! Facebook says no.')
-					}
-				});	
-			}
+			return deferred.promise;
+		}).then(function(){
+			checkIfTokenIsValid(token).then(function(tokenInDBAlready){
+				if(tokenInDBAlready) {
+					res.send("Logged In!")
+				}
+				else {
+					//https://graph.facebook.com/oauth/access_token_info?client_id=1086653268053781&access_token=EAAPcTi4JTxUBAB6SRrJyTwAXN0hBkWIYvBe7s4tubgAZCyD1g…wzGTolVDqzufZCVH0QUuCet2bgMN3b3dyrixKpjVVjpFZCUZD
+					checkurl = "https://graph.facebook.com/oauth/access_token_info?client_id=" + FB_APP_ID+ "&access_token=" + token;
+					//res.send("Logged In!")
+					request.get(checkurl,function(e,r){
+						if(!e && r.statusCode == 200){
+							var d = new Date();
+							var datestring = d.toISOString().slice(0,d.toISOString().length -1); 
+							var query = "INSERT into accesstoken values(?,?,DATE_FORMAT(?, '%Y-%m-%dT%T'))";
+							console.log("inserting into DB")
+							db.query(query,[userid,token,datestring] ,function(e){
+								if (e){
+									throw e;
+									res.send("dberror");
+								}
+								else{
+									res.send("Logged In!")
+								}
+							});
+						}
+						else{
+							res.send('Denied! Facebook says no.')
+						}
+					});	
+				}
+			});
 		});
 	}
 	else {
@@ -163,11 +198,6 @@ var token = req.body.token;
 	DATA_IS_FROM_SURVEY = true;
 
 	console.log('Start Initializing');
-	var post = {userid: req.body.userID};
-	db.query('INSERT INTO user SET ?', post, function(err, result) {
-		if (err) throw err;
-		else console.log('Registered');
-	});
 
 	for(var i = 0; i < (req.body.restaurants).length; ++i){
 
