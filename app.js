@@ -162,6 +162,7 @@ app.all('/api/survey/check/:userid', function(req, res){
 //set survey results
 //Assumption: This is only called after completing a survey.
 app.all('/api/survey/set', function(req,res){ 
+	console.log('survey set')
 var token = req.body.token;
 	checkIfTokenIsValid(token).then(function(tokenValidity){
 		if(!token || !tokenValidity) {
@@ -202,7 +203,7 @@ var token = req.body.token;
 //sets the rate for the usrs
 // app.all('/api/rate/:userid/', function(req,res){
 // 	token = req.body.token;
-// 	checkIfTokenIsValid().then(function(tokenValidity){
+// 	checkIfTokenIsValid(token).then(function(tokenValidity){
 // 		if(!token || !tokenValidity) {
 // 			res.send("Invalid Token")
 // 			return;

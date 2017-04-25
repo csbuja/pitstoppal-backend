@@ -253,7 +253,7 @@ module.exports = {
                 }
                 else{
                     //in english:
-                    //select the specific user and users who have rated a specific restaurant that have also rated things that youve rated 
+                    //select the unique identifier of you and other users who have rated a specific restaurant that have also rated things that youve rated 
                         var query_sub = 'select distinct userid from rate where userid =\'' + userid +'\' or userid in (select R1.userid from rate R1, rate R2 where R1.restaurant_id= \"' + restaurant_id + '\" and R2.restaurant_id in (select restaurant_id from rate where userid = \'' + userid + '\') and R1.userid = R2.userid) order by userid';
                     db.query(query_sub, function(err, result_sub){
                         
@@ -267,7 +267,7 @@ module.exports = {
 
 
                         //in english:
-                        //select everything about the specfic user and the users who have rated a specific restaurant 
+                        //select everything about you and other users who have rated a specific restaurant 
                         //that have also rated things that youve rated,
                         //ordered fist by restaurant id, and then by user id
                         //
