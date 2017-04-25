@@ -162,7 +162,9 @@ app.all('/api/survey/check/:userid', function(req, res){
 //set survey results
 //Assumption: This is only called after completing a survey.
 app.all('/api/survey/set', function(req,res){ 
+
 var token = req.body.token;
+	if (token){
 	checkIfTokenIsValid(token).then(function(tokenValidity){
 		if(!token || !tokenValidity) {
 			res.send("Invalid Token")
@@ -170,10 +172,9 @@ var token = req.body.token;
 		}
 		else {
 
-
 	//by above assumption, 
 	DATA_IS_FROM_SURVEY = true;
-	db.query('insert into user (userid,hassurvey) values (?,1) on duplicate key update hassurvey= true', [userid], function(err, result) {
+	db.query('insert into user (userid,hassurvey) values (?,1) on duplicate key update hassurvey=1', [req.body.userID], function(err, result) {
 			if (err) throw err;
 	});
 
@@ -191,10 +192,18 @@ var token = req.body.token;
 			from_survey: DATA_IS_FROM_SURVEY
 		};
 		driverNeeds.insert_rate(term);
+		if(i== req.body.restaurants.length -1){
+			res.send('Initialization Complete');
+		}
 	}
 	console.log('Initialization Complete');
 	}
 });
+
+}
+else{
+	res.send("invalid token")
+}
 });
 
 
@@ -202,7 +211,7 @@ var token = req.body.token;
 //sets the rate for the usrs
 // app.all('/api/rate/:userid/', function(req,res){
 // 	token = req.body.token;
-// 	checkIfTokenIsValid().then(function(tokenValidity){
+// 	checkIfTokenIsValid(token).then(function(tokenValidity){
 // 		if(!token || !tokenValidity) {
 // 			res.send("Invalid Token")
 // 			return;
