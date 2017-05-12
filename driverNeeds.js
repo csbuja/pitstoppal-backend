@@ -19,7 +19,7 @@ var yelp = new Yelp({
 module.exports = {
     filterGasFeed: function (data, lat, lon){
         var setOfStations = [];
-        var MAX_NUMBER_OF_GAS_STATIONS = 25;
+        var MAX_NUMBER_OF_GAS_STATIONS = 40;
         if (!data){
             console.log('ERROR FILTERING GASFEED');
             return setOfStations;
