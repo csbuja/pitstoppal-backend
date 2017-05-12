@@ -19,13 +19,13 @@ var yelp = new Yelp({
 module.exports = {
     filterGasFeed: function (data, lat, lon){
         var setOfStations = [];
-
+        var MAX_NUMBER_OF_GAS_STATIONS = 25;
         if (!data){
             console.log('ERROR FILTERING GASFEED');
             return setOfStations;
         }
         data.sort((a,b)=>{return (a.reg_price > b.reg_price)?1: ((b.reg_price > a.reg_price)?-1:0);});
-        for (var i = 0; (i < data.length && i < 15); i++){
+        for (var i = 0; (i < data.length && i < MAX_NUMBER_OF_GAS_STATIONS); i++){
             var distance = calcDistance(data[i].lat, data[i].lng, lat, lon);
             if(data[i].reg_price !== "N/A" && distance <= 25) {
                 setOfStations.push({
