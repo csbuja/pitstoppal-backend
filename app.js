@@ -398,6 +398,7 @@ app.all('/api/food/:currentPosition/:userid',function (req, res) {
 });
 });
 
+//TO DO: deprecate
 // both currentPosition and lastPosition are objects with latitude and longitude
 // latitude and longitude may be null
 //return the gas station within radius = 25 miles
@@ -417,6 +418,33 @@ app.all('/api/gas/:currentPosition',function (req, res) {
         currentPosition.longitude,
         radius,
         res
+    );
+	}
+});	
+});
+
+
+// both currentPosition and lastPosition are objects with latitude and longitude
+// latitude and longitude may be null
+//return the gas station within radius = 25 miles
+app.all('/api/gas/:currentPosition/:sortBy',function (req, res) {
+	var token = req.body.token;
+	checkIfTokenIsValid(token).then(function(tokenValidity){
+		if(!token || !tokenValidity) {
+			res.send("Invalid Token")
+			return;
+		}
+		else{
+    var currentPosition = JSON.parse(req.params.currentPosition);
+    var sortBy = req.params,sortBy;
+	var radius = 25;//rad || 15; //miles
+
+	driverNeeds.getStations(
+        currentPosition.latitude,
+        currentPosition.longitude,
+        radius,
+        res,
+        sortBy
     );
 	}
 });	

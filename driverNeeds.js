@@ -17,7 +17,7 @@ var yelp = new Yelp({
 });
 
 module.exports = {
-    filterGasFeed: function (data, lat, lon){
+    filterGasFeed: function (data, lat, lon, sortBy){
         var setOfStations = [];
         var MAX_NUMBER_OF_GAS_STATIONS = 40;
         if (!data){
@@ -43,7 +43,7 @@ module.exports = {
 
     // returns array of station literals sorted with lowest price first
     //there is no daily limit of api calls specified on the mygasfeed website
-    getStations: function (lat, lon, radius, res){
+    getStations: function (lat, lon, radius, res, sortBy){
         console.log('get Station is running');
         var self = this
 
@@ -60,7 +60,7 @@ module.exports = {
                 res.send( JSON.stringify([]));
             }
             else {
-             res.send(JSON.stringify(self.filterGasFeed(body.stations, lat, lon)));
+             res.send(JSON.stringify(self.filterGasFeed(body.stations, lat, lon, sortBy)));
             }
           }
         );
